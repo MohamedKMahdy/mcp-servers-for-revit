@@ -27,6 +27,13 @@ namespace revit_mcp_plugin.Core
             mcp_settings_pushButtonData.LargeImage = new BitmapImage(new Uri("/RevitMCPPlugin;component/Core/Ressources/settings-32.png", UriKind.RelativeOrAbsolute));
             mcpPanel.AddItem(mcp_settings_pushButtonData);
 
+            PushButtonData testToolsButtonData = new PushButtonData("ID_EXCMD_TEST_TOOLS", "Test\r\nTools",
+                Assembly.GetExecutingAssembly().Location, "revit_mcp_plugin.Core.TestToolsCommand");
+            testToolsButtonData.ToolTip = "Run tests for all registered MCP tools";
+            testToolsButtonData.Image = new BitmapImage(new Uri("/RevitMCPPlugin;component/Core/Ressources/settings-16.png", UriKind.RelativeOrAbsolute));
+            testToolsButtonData.LargeImage = new BitmapImage(new Uri("/RevitMCPPlugin;component/Core/Ressources/settings-32.png", UriKind.RelativeOrAbsolute));
+            mcpPanel.AddItem(testToolsButtonData);
+
             return Result.Succeeded;
         }
 
