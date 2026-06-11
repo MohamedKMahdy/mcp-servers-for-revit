@@ -122,6 +122,51 @@
       "commandName": "create_dimensions",
       "description": "Create dimension annotations between elements or points in the current view",
       "assemblyPath": "RevitMCPCommandSet.dll"
+    },
+    {
+      "commandName": "set_element_parameter",
+      "description": "Set one or more parameters on a Revit element by element ID",
+      "assemblyPath": "RevitMCPCommandSet.dll"
+    },
+    {
+      "commandName": "get_element_parameters",
+      "description": "Read parameter values from a Revit element",
+      "assemblyPath": "RevitMCPCommandSet.dll"
+    },
+    {
+      "commandName": "tag_element",
+      "description": "Tag a single Revit element in the active view",
+      "assemblyPath": "RevitMCPCommandSet.dll"
+    },
+    {
+      "commandName": "get_element_info",
+      "description": "Get family name, type, category, level, host, and bounding box for an element",
+      "assemblyPath": "RevitMCPCommandSet.dll"
+    },
+    {
+      "commandName": "place_and_configure",
+      "description": "Atomically place elements and set their parameters in one TransactionGroup",
+      "assemblyPath": "RevitMCPCommandSet.dll"
+    },
+    {
+      "commandName": "execute_transaction_group",
+      "description": "Execute multiple sub-calls atomically in a single Revit TransactionGroup with optional dry run",
+      "assemblyPath": "RevitMCPCommandSet.dll"
+    },
+    {
+      "commandName": "duplicate_element",
+      "description": "Copy a Revit element with an XYZ offset",
+      "assemblyPath": "RevitMCPCommandSet.dll"
+    },
+    {
+      "commandName": "export_view_image",
+      "description": "Export the active or named Revit view as a PNG image",
+      "assemblyPath": "RevitMCPCommandSet.dll"
+    },
+    {
+      "commandName": "get_parameter_definitions",
+      "description": "List all parameter definitions on a Revit element and its type",
+      "assemblyPath": "RevitMCPCommandSet.dll"
     }
   ]
 }
