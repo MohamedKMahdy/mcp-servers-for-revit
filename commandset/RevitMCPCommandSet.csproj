@@ -49,6 +49,21 @@
         <DefineConstants>$(DefineConstants);REVIT2022_OR_GREATER;REVIT2023_OR_GREATER;REVIT2024_OR_GREATER;REVIT2027_OR_GREATER</DefineConstants>
     </PropertyGroup>
 
+    <!-- RevitMCPSDK version. Defaults to match the Revit version like the other
+         packages. -->
+    <PropertyGroup>
+        <RevitMcpSdkVersion>$(RevitVersion).*</RevitMcpSdkVersion>
+    </PropertyGroup>
+    <!-- EXPERIMENT (UNTESTED): RevitMCPSDK has no 2027.* release on nuget.org yet
+         (latest is 2026.0.0.5), so RevitVersion.* (=2027.*) cannot restore for R27.
+         As a reversible attempt, pin RevitMCPSDK to 2026.* for R27 ONLY while the
+         Nice3point Revit API references stay at 2027.*. Whether the 2026 SDK works
+         against Revit 2027 (.NET 8) is UNVERIFIED and must be confirmed on a real
+         Revit 2027 install. Revert this PropertyGroup if it does not work. -->
+    <PropertyGroup Condition="$(Configuration.Contains('R27'))">
+        <RevitMcpSdkVersion>2026.*</RevitMcpSdkVersion>
+    </PropertyGroup>
+
     <PropertyGroup>
         <StartAction>Program</StartAction>
         <StartProgram>C:\Program Files\Autodesk\Revit $(RevitVersion)\Revit.exe</StartProgram>
@@ -63,7 +78,7 @@
         <PackageReference Include="Nice3point.Revit.Extensions" Version="$(RevitVersion).*" />
         <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitVersion).*" />
 		<PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitVersion).*" />
-		<PackageReference Include="RevitMCPSDK" Version="$(RevitVersion).*" />
+		<PackageReference Include="RevitMCPSDK" Version="$(RevitMcpSdkVersion)" />
     </ItemGroup>
 
     <ItemGroup>
