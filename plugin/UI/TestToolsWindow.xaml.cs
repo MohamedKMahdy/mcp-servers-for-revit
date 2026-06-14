@@ -50,6 +50,36 @@ namespace revit_mcp_plugin.UI
             Add("get_current_view_elements", "Returns first 5 walls in view",                  false,
                 _ => ParamsObj(new { category = "OST_Walls", limit = 5 }));
 
+            // Placement — door on wall (draw a wall through point (2500,0) on Level 1 first)
+            Add("create_point_based_element", "Place M_Single-Flush door at (2500,0) on nearest wall", false,
+                _ => ParamsObj(new
+                {
+                    data = new[]
+                    {
+                        new
+                        {
+                            name = "M_Single-Flush",
+                            locationPoint = new { x = 2500.0, y = 0.0, z = 0.0 },
+                            width = 900.0, height = 2100.0, baseLevel = 0.0, baseOffset = 0.0
+                        }
+                    }
+                }));
+
+            Add("place_and_configure", "Atomic: place door at (2500,0) + set Mark=D-TEST", false,
+                _ => ParamsObj(new
+                {
+                    placements = new[]
+                    {
+                        new
+                        {
+                            familyName = "M_Single-Flush",
+                            typeName = "",
+                            x = 2500.0, y = 0.0, z = 0.0,
+                            parameters = new[] { new { name = "Mark", value = "D-TEST" } }
+                        }
+                    }
+                }));
+
             // Requires element ID
             Add("get_element_info",         "Family/type/level/bbox for element",               true,
                 id => Params("elementId", id));
