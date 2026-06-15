@@ -4,9 +4,8 @@ Manual verification for hosted-family placement (`create_point_based_element` /
 `place_and_configure`) and `tag_element`, driven entirely from the **Test Tools**
 ribbon button. **Do not perform model writes by any other route** — use the panel.
 
-> **Revit version:** run this in **Revit 2025 or 2026**. The plugin (TCP server +
-> Test Tools panel) currently has no R27 build config, so panel testing is ≤2026.
-> The 2027 work is commandset *compile* validation only (see the build report).
+> **Revit version:** run this in **Revit 2025 or 2026** (both .NET 8). Revit 2027 is
+> dropped for now — it hosts .NET 10 and RevitMCPSDK has no 2027 release on nuget yet.
 
 ---
 
