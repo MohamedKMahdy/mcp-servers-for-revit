@@ -63,7 +63,7 @@ public class ExportViewImageEventHandler : IExternalEventHandler, IWaitableExter
             var options = new ImageExportOptions
             {
                 ViewName = view.Name,
-                ZoomType = ZoomFitType.FitPage,
+                ZoomType = ZoomFitType.FitToPage,
                 ImageResolution = ImageResolution.DPI_150,
                 HLRandWFViewsFileType = ImageFileType.PNG,
                 ShadowViewsFileType = ImageFileType.PNG,
