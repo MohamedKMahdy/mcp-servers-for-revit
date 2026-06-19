@@ -1,0 +1,50 @@
+name: Build Revit plugin (Debug R26)
+
+# Builds the mcp-servers-for-revit C# plugin + command set on a GitHub Windows
+# runner (which has open nuget.org access) and uploads the ready-to-deploy add-in
+# as an artifact. Lets you produce the binaries without nuget.org on your own box.
+#
+# Use: enable Actions on the fork, then either push to this branch or run it
+# manually (Actions tab -> "Build Revit plugin (Debug R26)" -> Run workflow).
+# Download the "revit-plugin-addin-2026" artifact and unzip it into
+#   %APPDATA%\Autodesk\Revit\Addins\2026\
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ feature/tier1-3-tools ]
+    paths:
+      - 'plugin/**'
+      - 'commandset/**'
+      - 'command.json'
+      - '.github/workflows/build-plugin.yml'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Plugin first — the command set's deploy step copies into the plugin's
+      # AddIn output tree.
+      - name: Build plugin (Debug R26)
+        run: dotnet build "plugin/RevitMCPPlugin.csproj" --configuration "Debug R26"
+
+      - name: Build command set (Debug R26)
+        run: dotnet build "commandset/RevitMCPCommandSet.csproj" --configuration "Debug R26"
+
+      - name: Show produced add-in tree
+        run: Get-ChildItem -Recurse "plugin/bin/AddIn 2026 Debug R26" | Select-Object FullName
+        shell: pwsh
+
+      - name: Upload deployable add-in
+        uses: actions/upload-artifact@v4
+        with:
+          name: revit-plugin-addin-2026
+          path: "plugin/bin/AddIn 2026 Debug R26"
+          if-no-files-found: error
