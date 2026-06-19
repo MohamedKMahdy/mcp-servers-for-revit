@@ -69,7 +69,7 @@ public class GetParameterDefinitionsEventHandler : IExternalEventHandler, IWaita
             if (IncludeTypeParameters)
             {
                 var typeId = element.GetTypeId();
-                if (typeId != null && typeId != ElementId.InvalidElementId)
+                if (typeId != null && typeId != Autodesk.Revit.DB.ElementId.InvalidElementId)
                 {
                     var typeElem = doc.GetElement(typeId);
                     if (typeElem != null)

@@ -674,7 +674,7 @@ namespace RevitMCPCommandSet.Services
                 {
                     info.OwnerView = viewParam.AsString();
                 }
-                else if (element.OwnerViewId != ElementId.InvalidElementId)
+                else if (element.OwnerViewId != Autodesk.Revit.DB.ElementId.InvalidElementId)
                 {
                     View ownerView = doc.GetElement(element.OwnerViewId) as View;
                     info.OwnerView = ownerView?.Name;

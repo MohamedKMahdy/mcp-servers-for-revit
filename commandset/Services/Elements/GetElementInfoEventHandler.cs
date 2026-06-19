@@ -45,7 +45,7 @@ public class GetElementInfoEventHandler : IExternalEventHandler, IWaitableExtern
                 familyName = fi.Symbol?.Family?.Name;
                 typeName = fi.Symbol?.Name;
             }
-            else if (element.GetTypeId() is ElementId typeId && typeId != ElementId.InvalidElementId)
+            else if (element.GetTypeId() is ElementId typeId && typeId != Autodesk.Revit.DB.ElementId.InvalidElementId)
             {
                 var etype = doc.GetElement(typeId);
                 typeName = etype?.Name;
@@ -55,7 +55,7 @@ public class GetElementInfoEventHandler : IExternalEventHandler, IWaitableExtern
             string levelName = null;
             var levelParam = element.get_Parameter(BuiltInParameter.FAMILY_LEVEL_PARAM)
                              ?? element.get_Parameter(BuiltInParameter.LEVEL_PARAM);
-            if (levelParam != null && levelParam.AsElementId() is ElementId lid && lid != ElementId.InvalidElementId)
+            if (levelParam != null && levelParam.AsElementId() is ElementId lid && lid != Autodesk.Revit.DB.ElementId.InvalidElementId)
                 levelName = (doc.GetElement(lid) as Level)?.Name;
 
             // Host

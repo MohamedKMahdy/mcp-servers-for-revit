@@ -108,7 +108,7 @@ namespace RevitMCPCommandSet.Services
                     {
                         // Try to get from element type
                         ElementId typeId = element.GetTypeId();
-                        if (typeId != ElementId.InvalidElementId)
+                        if (typeId != Autodesk.Revit.DB.ElementId.InvalidElementId)
                         {
                             Element elementType = doc.GetElement(typeId);
                             if (elementType != null)
@@ -180,7 +180,7 @@ namespace RevitMCPCommandSet.Services
                         overrides.SetCutForegroundPatternColor(color);
 
                         // Set solid fill pattern
-                        if (solidFillPatternId != ElementId.InvalidElementId)
+                        if (solidFillPatternId != Autodesk.Revit.DB.ElementId.InvalidElementId)
                         {
                             overrides.SetSurfaceForegroundPatternId(solidFillPatternId);
                             overrides.SetCutForegroundPatternId(solidFillPatternId);
@@ -260,7 +260,7 @@ namespace RevitMCPCommandSet.Services
 
                 case StorageType.ElementId:
                     ElementId id = parameter.AsElementId();
-                    if (id == ElementId.InvalidElementId)
+                    if (id == Autodesk.Revit.DB.ElementId.InvalidElementId)
                         return "None";
 
                     Element element = doc.GetElement(id);
@@ -450,7 +450,7 @@ namespace RevitMCPCommandSet.Services
                 }
             }
 
-            return ElementId.InvalidElementId;
+            return Autodesk.Revit.DB.ElementId.InvalidElementId;
         }
     }
 }
