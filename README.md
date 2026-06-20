@@ -9,6 +9,20 @@ mcp-servers-for-revit enables AI clients like Claude, Cline, and other MCP-compa
 > [!NOTE]
 > This is a fork of the original [revit-mcp](https://github.com/mcp-servers-for-revit/revit-mcp) project with additional tools and functionality improvements.
 
+## This fork — execution backend for the revit-personalization thesis
+
+This fork is used as the **execution backend** for the MSc thesis *"Agent-Augmented BIM Log Mining for Personalized Action Generation"* (the `revit-personalization` pipeline). The thesis contribution lives in `revit-personalization`; this repo is the execution surface it runs predefined Revit tool-calls against. Fork-specific work:
+
+- **Trimmed to Revit 2025 & 2026 only (.NET 8).** Support for Revit 2020–2024 and 2027 was dropped (commit `752650b` drops R20–R24; an earlier `c69c2a3` dropped R27). All build configurations now target only `R25` / `R26`, both on .NET 8.
+
+- **10 added tools** (on branch `feature/tier1-3-tools`). Each is implemented as a TypeScript tool plus a C# command + event handler in the command set, **except `resolve_category`, which is TypeScript-only** (a pure static category-name lookup with no Revit round-trip). See the [added tools sub-table](#added-in-this-fork) under Supported Tools. The set: `set_element_parameter`, `get_element_parameters`, `tag_element`, `resolve_category`, `get_element_info`, `place_and_configure`, `execute_transaction_group` (supports `dryRun` to validate and roll back without committing), `duplicate_element`, `export_view_image`, `get_parameter_definitions`.
+
+- **Direct socket execution from `revit-personalization`.** The pipeline's `revit_bridge.py` talks **directly to the plugin's `SocketService`** over TCP JSON-RPC on `localhost:8080` — it does not go through the TypeScript MCP server. The socket is started inside Revit via the **"Revit MCP Switch"** ribbon button (panel "Revit MCP Plugin"); the port is hard-wired to `8080`.
+
+- **"Test Tools" ribbon button.** A **Test Tools** button (added to the "Revit MCP Plugin" ribbon panel, `plugin/Core/TestToolsCommand.cs` + `plugin/UI/TestToolsWindow`) opens a WPF panel that lists every registered tool with per-tool **Run** and **Run All Tests**, a server-status dot, and JSON results. It is opened **modeless** (`Show()`, not `ShowDialog()`): a modal dialog blocked Revit's UI thread, so the `IExternalEvent`s each tool raises never processed and every tool hit its timeout (commit `b8f8b5b`).
+
+- **GitHub Actions CI build.** Corporate NuGet `PackageSourceMapping` blocks nuget.org for the RevitMCPSDK / Nice3point packages on the development machine, so `.github/workflows/build-plugin.yml` builds the plugin + command set (`Debug R26`) on a Windows runner with open nuget.org access and uploads the ready-to-deploy add-in as the `revit-plugin-addin-2026` artifact.
+
 ## Architecture
 
 ```mermaid
@@ -20,12 +34,12 @@ flowchart LR
     Revit["Revit API"]
 
     Client <-->|stdio| Server
-    Server <-->|WebSocket| Plugin
+    Server <-->|TCP socket :8080| Plugin
     Plugin -->|loads| CommandSet
     CommandSet -->|executes| Revit
 ```
 
-The **MCP Server** (TypeScript) translates tool calls from AI clients into WebSocket messages. The **Revit Plugin** (C#) runs inside Revit, listens for those messages, and dispatches them to the **Command Set** (C#), which executes the actual Revit API operations and returns results back up the chain.
+The **MCP Server** (TypeScript) translates tool calls from AI clients into TCP socket messages (a raw `net.Socket` ↔ `TcpListener` channel on port 8080 — not WebSocket). The **Revit Plugin** (C#) runs inside Revit, listens for those messages, and dispatches them to the **Command Set** (C#), which executes the actual Revit API operations and returns results back up the chain.
 
 ## Requirements
 
@@ -140,13 +154,30 @@ If using a release ZIP, the command set is pre-installed inside the plugin. For 
 | `send_code_to_revit` | Send C# code to Revit to execute |
 | `say_hello` | Display a greeting dialog in Revit (connection test) |
 
+### Added in this fork
+
+These tools were added on branch `feature/tier1-3-tools` for the `revit-personalization` thesis. All are TypeScript + C# (command + event handler), except `resolve_category`, which is TypeScript-only.
+
+| Tool | Description |
+| ---- | ----------- |
+| `set_element_parameter` | Set one or more parameters on an element by ID (single or batch) |
+| `get_element_parameters` | Read parameter values (name, value, storageType, isReadOnly) from an element |
+| `tag_element` | Tag a single element in the active view; auto-selects a tag family by category |
+| `resolve_category` | Convert a plain-language category name (any language) to a `BuiltInCategory` string — static lookup, no Revit round-trip (TypeScript-only) |
+| `get_element_info` | Get an element's family, type, category, level, host, and bounding box |
+| `place_and_configure` | Atomically place element(s) and set their parameters in one `TransactionGroup` |
+| `execute_transaction_group` | Run multiple sub-calls in a single `TransactionGroup`; `dryRun:true` validates and rolls back |
+| `duplicate_element` | Copy an element offset by (dx, dy, dz) in mm; returns the new element ID |
+| `export_view_image` | Export the active or a named view as a PNG to a local file path |
+| `get_parameter_definitions` | List parameter definitions on an element/type (name, GUID, storageType, group, isShared, isReadOnly) |
+
 ## Testing
 
 The test project uses [Nice3point.TUnit.Revit](https://github.com/Nice3point/RevitUnit) to run integration tests against a live Revit instance. No separate addin installation is required — the framework injects into the running Revit process automatically.
 
 ### Prerequisites
 
-- **.NET 10 SDK** — required by Nice3point.Revit.Sdk 6.1.0. Install via `winget install Microsoft.DotNet.SDK.10`
+- **.NET 8 SDK** — this fork targets .NET 8 for Revit 2025/2026. Install via `winget install Microsoft.DotNet.SDK.8`
 - **Autodesk Revit 2026** (or 2025) — must be installed and licensed on your machine
 
 ### Running Tests
