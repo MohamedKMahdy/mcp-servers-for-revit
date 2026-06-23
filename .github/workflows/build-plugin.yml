@@ -1,13 +1,14 @@
-name: Build Revit plugin (Debug R26)
+name: Build Revit plugin (R25 + R26)
 
 # Builds the mcp-servers-for-revit C# plugin + command set on a GitHub Windows
 # runner (which has open nuget.org access) and uploads the ready-to-deploy add-in
-# as an artifact. Lets you produce the binaries without nuget.org on your own box.
+# as an artifact, for BOTH Revit 2025 and 2026. Lets you produce the binaries
+# without nuget.org on your own box.
 #
 # Use: enable Actions on the fork, then either push to this branch or run it
-# manually (Actions tab -> "Build Revit plugin (Debug R26)" -> Run workflow).
-# Download the "revit-plugin-addin-2026" artifact and unzip it into
-#   %APPDATA%\Autodesk\Revit\Addins\2026\
+# manually (Actions tab -> "Build Revit plugin (R25 + R26)" -> Run workflow).
+# Download the "revit-plugin-addin-2025" / "revit-plugin-addin-2026" artifact and
+# unzip it into %APPDATA%\Autodesk\Revit\Addins\<ver>\
 
 on:
   workflow_dispatch:
@@ -22,6 +23,14 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rev: "2025"
+            config: "Debug R25"
+          - rev: "2026"
+            config: "Debug R26"
     steps:
       - uses: actions/checkout@v4
 
@@ -32,19 +41,19 @@ jobs:
 
       # Plugin first — the command set's deploy step copies into the plugin's
       # AddIn output tree.
-      - name: Build plugin (Debug R26)
-        run: dotnet build "plugin/RevitMCPPlugin.csproj" --configuration "Debug R26"
+      - name: Build plugin (${{ matrix.config }})
+        run: dotnet build "plugin/RevitMCPPlugin.csproj" --configuration "${{ matrix.config }}"
 
-      - name: Build command set (Debug R26)
-        run: dotnet build "commandset/RevitMCPCommandSet.csproj" --configuration "Debug R26"
+      - name: Build command set (${{ matrix.config }})
+        run: dotnet build "commandset/RevitMCPCommandSet.csproj" --configuration "${{ matrix.config }}"
 
       - name: Show produced add-in tree
-        run: Get-ChildItem -Recurse "plugin/bin/AddIn 2026 Debug R26" | Select-Object FullName
+        run: Get-ChildItem -Recurse "plugin/bin/AddIn ${{ matrix.rev }} ${{ matrix.config }}" | Select-Object FullName
         shell: pwsh
 
       - name: Upload deployable add-in
         uses: actions/upload-artifact@v4
         with:
-          name: revit-plugin-addin-2026
-          path: "plugin/bin/AddIn 2026 Debug R26"
+          name: revit-plugin-addin-${{ matrix.rev }}
+          path: "plugin/bin/AddIn ${{ matrix.rev }} ${{ matrix.config }}"
           if-no-files-found: error
