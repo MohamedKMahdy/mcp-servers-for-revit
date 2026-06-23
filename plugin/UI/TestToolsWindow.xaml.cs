@@ -122,7 +122,10 @@ namespace revit_mcp_plugin.UI
                 try
                 {
                     using var client = new TcpClient();
-                    client.Connect("localhost", PORT);
+                    // 127.0.0.1, NOT "localhost": the server binds IPv4 (TcpListener on
+                    // IPAddress.Any = 0.0.0.0), but "localhost" resolves to ::1 (IPv6) first on
+                    // Windows and .NET's TcpClient doesn't fall back to IPv4 → connection refused.
+                    client.Connect("127.0.0.1", PORT);
                     client.ReceiveTimeout = 20000;
                     client.SendTimeout = 5000;
 
@@ -158,7 +161,7 @@ namespace revit_mcp_plugin.UI
                 try
                 {
                     using var c = new TcpClient();
-                    c.Connect("localhost", PORT);
+                    c.Connect("127.0.0.1", PORT);   // IPv4 — see SendCommandAsync
                     return true;
                 }
                 catch { return false; }
