@@ -167,6 +167,11 @@
       "commandName": "get_parameter_definitions",
       "description": "List all parameter definitions on a Revit element and its type",
       "assemblyPath": "RevitMCPCommandSet.dll"
+    },
+    {
+      "commandName": "pick_point",
+      "description": "Let the user pick the placement location interactively in Revit (mode point|line); returns mm coordinates",
+      "assemblyPath": "RevitMCPCommandSet.dll"
     }
   ]
 }
