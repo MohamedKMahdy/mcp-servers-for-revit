@@ -41,8 +41,8 @@ namespace revit_mcp_plugin.Core
                 PushButtonData testToolsButtonData = new PushButtonData("ID_EXCMD_TEST_TOOLS", "Test\r\nTools",
                     Assembly.GetExecutingAssembly().Location, "revit_mcp_plugin.Core.TestToolsCommand");
                 testToolsButtonData.ToolTip = "Run tests for all registered MCP tools";
-                testToolsButtonData.Image = new BitmapImage(new Uri("/RevitMCPPlugin;component/Core/Ressources/settings-16.png", UriKind.RelativeOrAbsolute));
-                testToolsButtonData.LargeImage = new BitmapImage(new Uri("/RevitMCPPlugin;component/Core/Ressources/settings-32.png", UriKind.RelativeOrAbsolute));
+                testToolsButtonData.Image = new BitmapImage(new Uri("/RevitMCPPlugin;component/Core/Ressources/test-16.png", UriKind.RelativeOrAbsolute));
+                testToolsButtonData.LargeImage = new BitmapImage(new Uri("/RevitMCPPlugin;component/Core/Ressources/test-32.png", UriKind.RelativeOrAbsolute));
                 mcpPanel.AddItem(testToolsButtonData);
             }
             catch (Exception ex)
