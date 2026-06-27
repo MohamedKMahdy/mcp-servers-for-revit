@@ -50,7 +50,33 @@ namespace revit_mcp_plugin.Core
                 System.Diagnostics.Debug.WriteLine($"[revit_mcp_plugin] Ribbon setup failed (non-fatal): {ex.Message}");
             }
 
+            // Auto-start the MCP socket server (:8080) by default so it's up without the user having
+            // to click "Revit MCP Switch" each session. The switch still toggles it off/on. We do this
+            // on ApplicationInitialized rather than here because SocketService.Initialize needs a
+            // UIApplication, and OnStartup only has a UIControlledApplication.
+            application.ControlledApplication.ApplicationInitialized += OnApplicationInitialized;
+
             return Result.Succeeded;
+        }
+
+        private void OnApplicationInitialized(object sender, Autodesk.Revit.DB.Events.ApplicationInitializedEventArgs e)
+        {
+            try
+            {
+                var app = sender as Autodesk.Revit.ApplicationServices.Application;
+                if (app == null) return;
+                var uiApp = new UIApplication(app);
+                if (!SocketService.Instance.IsRunning)
+                {
+                    SocketService.Instance.Initialize(uiApp);
+                    SocketService.Instance.Start();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Non-fatal: the user can still start it manually with the Switch button.
+                System.Diagnostics.Debug.WriteLine($"[revit_mcp_plugin] MCP auto-start failed (non-fatal): {ex.Message}");
+            }
         }
 
         public Result OnShutdown(UIControlledApplication application)
