@@ -34,6 +34,11 @@
       "assemblyPath": "RevitMCPCommandSet.dll"
     },
     {
+      "commandName": "get_warnings",
+      "description": "Read Revit's current warnings/errors (duplicate Mark, unhosted, overlap) + recent dialog pop-ups. Read-only.",
+      "assemblyPath": "RevitMCPCommandSet.dll"
+    },
+    {
       "commandName": "create_point_based_element",
       "description": "Create point-based elements like furniture",
       "assemblyPath": "RevitMCPCommandSet.dll"
